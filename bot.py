@@ -1,4 +1,5 @@
 
+
 import discord
 from discord.ext import commands
 import random
@@ -59,6 +60,20 @@ async def on_message(message):
 		w = open("channel.txt", "w")
 		w.write(str(message.channel.id))
 		w.close()
+	if message.content[:5] == "!post":
+		message = message.content[5:]
+		cfg = {
+		"page_id" : "557681064579204",
+		"access_token" : access_token
+		}
+		graph = facebook.GraphAPI(cfg["access_token"])
+		resp = graph.get_object("me/accounts")
+		page_access_token=None
+		for page in resp["data"]:
+			if page["id"] == cfg["page_id"]:
+				page_access_token = page["access_token"]
+			graph = facebook.GraphAPI(page_access_token)
+		success = graph.put_wall_post(message)
        
 
 bot.run('MzU3NzIzNzYyMDkyODAyMDUw.DQP9Eg.K4m6VXRtCZMlvvO53uE51mraANs')
